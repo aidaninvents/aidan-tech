@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aidan Tech Downloads</title>
+    <style>
+        body {
+            background: #0d1117;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 { margin-top: 20px; }
+        h2 { margin-top: 30px; color: #2ea043; cursor: pointer; }
+
+        .version-list { list-style: none; padding: 0; }
+        .version-list li {
+            background: #161b22;
+            margin: 10px auto;
+            padding: 15px;
+            width: 520px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lts { color: gold; font-weight: bold; }
+        .supported { color: #2ea043; }
+        .unsupported { color: #ff5555; }
+
+        button {
+            background: #2ea043;
+            border: none;
+            padding: 8px 16px;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Aidan Tech Downloads</h1>
+
+<h2 onclick="toggle('v1to8')">AidanOS 1–8 (2016–2023)</h2>
+<ul id="v1to8" class="version-list"></ul>
+
+<h2 onclick="toggle('v9')">AidanOS 9 (2024)</h2>
+<ul id="v9" class="version-list"></ul>
+
+<h2 onclick="toggle('v10')">AidanOS 10/X (2025)</h2>
+<ul id="v10" class="version-list"></ul>
+
+<h2 onclick="toggle('v26')">AidanOS 26 (2026)</h2>
+<ul id="v26" class="version-list"></ul>
+
+<script>
+// ---------- SUPPORT FUNCTIONS ----------
+function endDate(date, lts){
+    let parts = date.split("-");
+    let d = new Date("20"+parts[2], parts[0]-1, parts[1]);
+    d.setFullYear(d.getFullYear() + (lts ? 4 : 2));
+    d.setDate(1); // round to first of month
+    return (d.getMonth()+1).toString().padStart(2,"0")+"-"+d.getDate().toString().padStart(2,"0")+"-"+d.getFullYear().toString().slice(2);
+}
+
+function supported(end){
+    let p = end.split("-");
+    let d = new Date("20"+p[2], p[0]-1, p[1]);
+    return new Date() <= d;
+}
+
+// ---------- BUILD FUNCTION ----------
+function build(id, data){
+    let c = document.getElementById(id);
+    data.forEach(v=>{
+        let end = endDate(v.date, v.lts);
+        let ok = supported(end);
+
+        let li = document.createElement("li");
+        li.innerHTML = `
+            <span>
+            ${v.name} (${v.date} → ${end})
+            ${v.lts ? '<span class="lts">LTS</span>' : ''}
+            <span class="${ok ? 'supported' : 'unsupported'}">
+            ${ok ? 'Supported' : 'Out of Support'}
+            </span>
+            </span>
+            <button onclick="dl('${v.file}')">Download</button>
+        `;
+        c.appendChild(li);
+    });
+}
+
+function dl(f){
+    let a=document.createElement("a");
+    a.href="http://localhost:8000/"+f;
+    a.download=f;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+function toggle(id){
+    let el=document.getElementById(id);
+    el.style.display = el.style.display==="none"?"block":"none";
+}
+
+// ---------- DATA ----------
+
+// 1–8 releases (each has Release, H1, H2)
+let v1to8 = [
+    {name:"1", date:"01-01-16", lts:false, file:"aidanos1.py"},
+    {name:"1 H1", date:"06-01-16", lts:false, file:"aidanos1_h1.py"},
+    {name:"1 H2", date:"12-01-16", lts:true,  file:"aidanos1_h2.py"},
+    {name:"2", date:"01-01-17", lts:false, file:"aidanos2.py"},
+    {name:"2 H1", date:"06-01-17", lts:false, file:"aidanos2_h1.py"},
+    {name:"2 H2", date:"12-01-17", lts:true,  file:"aidanos2_h2.py"},
+    {name:"3", date:"01-01-18", lts:false, file:"aidanos3.py"},
+    {name:"3 H1", date:"06-01-18", lts:false, file:"aidanos3_h1.py"},
+    {name:"3 H2", date:"12-01-18", lts:true,  file:"aidanos3_h2.py"},
+    {name:"4", date:"01-01-19", lts:false, file:"aidanos4.py"},
+    {name:"4 H1", date:"06-01-19", lts:false, file:"aidanos4_h1.py"},
+    {name:"4 H2", date:"12-01-19", lts:true,  file:"aidanos4_h2.py"},
+    {name:"5", date:"01-01-20", lts:false, file:"aidanos5.py"},
+    {name:"5 H1", date:"06-01-20", lts:false, file:"aidanos5_h1.py"},
+    {name:"5 H2", date:"12-01-20", lts:true,  file:"aidanos5_h2.py"},
+    {name:"6", date:"01-01-21", lts:false, file:"aidanos6.py"},
+    {name:"6 H1", date:"06-01-21", lts:false, file:"aidanos6_h1.py"},
+    {name:"6 H2", date:"12-01-21", lts:true,  file:"aidanos6_h2.py"},
+    {name:"7", date:"01-01-22", lts:false, file:"aidanos7.py"},
+    {name:"7 H1", date:"06-01-22", lts:false, file:"aidanos7_h1.py"},
+    {name:"7 H2", date:"12-01-22", lts:true,  file:"aidanos7_h2.py"},
+    {name:"8", date:"01-01-23", lts:false, file:"aidanos8.py"},
+    {name:"8 H1", date:"06-01-23", lts:false, file:"aidanos8_h1.py"},
+    {name:"8 H2", date:"12-01-23", lts:true,  file:"aidanos8_h2.py"}
+];
+
+// 9 dot versions (9.0 → 9.12)
+let v9 = [];
+for(let i=0;i<=12;i++){
+    v9.push({
+        name:`9.${i}`,
+        date:`${(i===0?'01':'0'+i)}-01-24`,
+        lts: i===12,
+        file:`aidanos9_${i}.py`
+    });
+}
+
+// 10 dot versions (10.0 → 10.12)
+let v10 = [];
+for(let i=0;i<=12;i++){
+    v10.push({
+        name:`10.${i}`,
+        date:`${(i===0?'01':'0'+i)}-01-25`,
+        lts: i===12,
+        file:`aidanos10_${i}.py`
+    });
+}
+
+// 26 dot versions (26.0 → 26.3)
+let v26 = [];
+for(let i=0;i<=3;i++){
+    v26.push({
+        name:`26.${i}`,
+        date:`${(i===0?'01':'0'+i)}-01-26`,
+        lts: i===1,
+        file:`aidanos26_${i}.py`
+    });
+}
+
+// ---------- BUILD ----------
+build("v1to8", v1to8);
+build("v9", v9);
+build("v10", v10);
+build("v26", v26);
+
+</script>
+</body>
+</html>
